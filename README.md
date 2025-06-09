@@ -160,14 +160,14 @@ UI: 安卓风格设计
 1. Google Fonts
 
 提供Roboto字体
----
+
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
 
 2. Material Icons
 
 可选添加图标支持
----
+
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -390,14 +390,14 @@ External Resource References:
 1. Google Fonts
 
 Roboto fonts are available
----
+
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
 
 2. Material Icons
 
 Optional icon support
----
+
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
