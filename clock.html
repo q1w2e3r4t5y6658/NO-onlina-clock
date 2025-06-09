@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多功能时钟</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <style>
+        :root {
+            --primary: #4285f4;
+            --primary-dark: #3367d6;
+            --secondary: #34a853;
+            --secondary-dark: #2d8c4a;
+            --warning: #fbbc05;
+            --warning-dark: #e6a404;
+            --danger: #ea4335;
+            --danger-dark: #d73a2d;
+            --background: #f5f5f5;
+            --surface: #ffffff;
+            --on-surface: #212121;
+            --on-surface-secondary: #757575;
+            --divider: #e0e0e0;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--on-surface);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            padding-top: 40px;
+        }
+        
+        .app-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: var(--surface);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        /* 导航栏 */
+        .nav-tabs {
+            display: flex;
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--divider);
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 16px 8px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--on-surface-secondary);
+            background: none;
+            border: none;
+            position: relative;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .nav-tab.active {
+            color: var(--primary);
+        }
+        
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 3px 3px 0 0;
+        }
+        
+        /* 内容区域 */
+        .tab-content {
+            padding: 24px;
+        }
+        
+        .tab-panel {
+            display: none;
+        }
+        
+        .tab-panel.active {
+            display: block;
+        }
+        
+        /* 本地时间样式 */
+        .local-time-display {
+            font-size: 56px;
+            font-weight: 300;
+            text-align: center;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+            color: var(--on-surface);
+        }
+        
+        .local-date-display {
+            text-align: center;
+            font-size: 16px;
+            color: var(--on-surface-secondary);
+            margin-bottom: 4px;
+        }
+        
+        .local-day-display {
+            text-align: center;
+            font-size: 16px;
+            color: var(--on-surface-secondary);
+        }
+        
+        /* 秒表样式 */
+        .stopwatch-display {
+            font-size: 56px;
+            font-weight: 300;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+            margin: 20px 0;
+            color: var(--on-surface);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            border: none;
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: var(--warning-dark);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: var(--danger-dark);
+        }
+        
+        .btn-reset {
+            background-color: #f1f1f1;
+            color: var(--on-surface);
+        }
+        
+        .laps-container {
+            max-height: 200px;
+            overflow-y: auto;
+            border-top: 1px solid var(--divider);
+            padding-top: 16px;
+        }
+        
+        .lap-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--divider);
+        }
+        
+        .lap-number {
+            font-weight: 500;
+            color: var(--on-surface);
+        }
+        
+        .lap-time {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 16px;
+            color: var(--on-surface);
+        }
+        
+        /* 倒计时样式 */
+        .countdown-display {
+            font-size: 56px;
+            font-weight: 300;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+            margin: 20px 0 30px;
+            color: var(--on-surface);
+        }
+        
+        .time-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .time-input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .time-label {
+            font-size: 14px;
+            color: var(--on-surface-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .time-input {
+            width: 80px;
+            height: 56px;
+            border: 1px solid var(--divider);
+            border-radius: 8px;
+            font-size: 24px;
+            text-align: center;
+            font-family: 'Roboto Mono', monospace;
+            padding: 8px;
+        }
+        
+        /* 世界时钟样式 */
+        .world-clock-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .clock-card {
+            background-color: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .clock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .city-name {
+            font-weight: 500;
+            font-size: 18px;
+        }
+        
+        .timezone {
+            font-size: 14px;
+            color: var(--on-surface-secondary);
+        }
+        
+        .clock-time {
+            font-size: 32px;
+            font-weight: 300;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        .clock-date {
+            font-size: 14px;
+            color: var(--on-surface-secondary);
+            margin-top: 4px;
+        }
+        
+        .add-city-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 24px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .add-city-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 480px) {
+            .local-time-display, .stopwatch-display, .countdown-display {
+                font-size: 48px;
+            }
+            
+            .time-input {
+                width: 70px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 导航栏 -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="local-time">本地时间</button>
+            <button class="nav-tab" data-tab="stopwatch">秒表</button>
+            <button class="nav-tab" data-tab="countdown">倒计时</button>
+            <button class="nav-tab" data-tab="world-clock">世界时钟</button>
+        </div>
+        
+        <!-- 内容区域 -->
+        <div class="tab-content">
+            <!-- 本地时间 -->
+            <div class="tab-panel active" id="local-time">
+                <div class="local-time-display">00:00:00</div>
+                <div class="local-date-display">2023年10月15日</div>
+                <div class="local-day-display">星期日</div>
+            </div>
+            
+            <!-- 秒表 -->
+            <div class="tab-panel" id="stopwatch">
+                <div class="stopwatch-display">00:00.000</div>
+                <div class="controls">
+                    <button class="btn btn-danger" id="stopwatch-reset">复位</button>
+                    <button class="btn btn-primary" id="stopwatch-start">开始</button>
+                    <button class="btn btn-warning" id="stopwatch-pause" style="display:none">暂停</button>
+                    <button class="btn btn-secondary" id="stopwatch-lap">计圈</button>
+                </div>
+                <div class="laps-container" id="stopwatch-laps">
+                    <!-- 圈数记录会在这里显示 -->
+                </div>
+            </div>
+            
+            <!-- 计时器 -->
+            <div class="tab-panel" id="countdown">
+                <div class="countdown-display">00:00:00</div>
+                <div class="time-inputs">
+                    <div class="time-input-group">
+                        <div class="time-label">小时</div>
+                        <input type="number" class="time-input" id="countdown-hours" min="0" max="99" value="0">
+                    </div>
+                    <div class="time-input-group">
+                        <div class="time-label">分钟</div>
+                        <input type="number" class="time-input" id="countdown-minutes" min="0" max="59" value="0">
+                    </div>
+                    <div class="time-input-group">
+                        <div class="time-label">秒钟</div>
+                        <input type="number" class="time-input" id="countdown-seconds" min="0" max="59" value="0">
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-danger" id="countdown-reset">重置</button>
+                    <button class="btn btn-primary" id="countdown-start">开始</button>
+                    <button class="btn btn-warning" id="countdown-pause" style="display:none">暂停</button>
+                </div>
+            </div>
+            
+            <!-- 世界时钟 -->
+            <div class="tab-panel" id="world-clock">
+                <div class="world-clock-list" id="world-clock-list">
+                    <!-- 世界时钟城市会在这里显示 -->
+                </div>
+                <button class="add-city-btn" id="add-city-button">添加城市</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 导航切换
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // 移除所有活动状态
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    tabPanels.forEach(p => p.classList.remove('active'));
+                    
+                    // 添加当前活动状态
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            /* 本地时间功能 */
+            const localTimeDisplay = document.querySelector('.local-time-display');
+            const localDateDisplay = document.querySelector('.local-date-display');
+            const localDayDisplay = document.querySelector('.local-day-display');
+            
+            function updateLocalTime() {
+                const now = new Date();
+                
+                // 格式化时间
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                localTimeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+                
+                // 格式化日期
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                localDateDisplay.textContent = `${year}年${month}月${day}日`;
+                
+                // 星期几
+                const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+                const dayOfWeek = weekdays[now.getDay()];
+                localDayDisplay.textContent = dayOfWeek;
+            }
+            
+            setInterval(updateLocalTime, 1000);
+            updateLocalTime();
+            
+            /* 秒表功能 */
+            const stopwatchDisplay = document.querySelector('.stopwatch-display');
+            const stopwatchStartBtn = document.getElementById('stopwatch-start');
+            const stopwatchPauseBtn = document.getElementById('stopwatch-pause');
+            const stopwatchResetBtn = document.getElementById('stopwatch-reset');
+            const stopwatchLapBtn = document.getElementById('stopwatch-lap');
+            const stopwatchLapsList = document.getElementById('stopwatch-laps');
+            
+            let stopwatchRunning = false;
+            let stopwatchStartTime = 0;
+            let stopwatchElapsedTime = 0;
+            let stopwatchAnimationFrameId;
+            let lapCounter = 0;
+            let lastLapTime = 0;
+            
+            function formatStopwatchTime(milliseconds) {
+                const totalSeconds = Math.floor(milliseconds / 1000);
+                const ms = Math.floor(milliseconds % 1000);
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                
+                const pad = (num, len = 2) => String(num).padStart(len, '0');
+                return `${pad(minutes)}:${pad(seconds)}.${pad(ms, 3)}`;
+            }
+            
+            function updateStopwatch() {
+                if (stopwatchRunning) {
+                    const currentElapsedTime = performance.now() - stopwatchStartTime;
+                    stopwatchDisplay.textContent = formatStopwatchTime(stopwatchElapsedTime + currentElapsedTime);
+                    stopwatchAnimationFrameId = requestAnimationFrame(updateStopwatch);
+                }
+            }
+            
+            stopwatchStartBtn.addEventListener('click', () => {
+                if (!stopwatchRunning) {
+                    stopwatchRunning = true;
+                    stopwatchStartTime = performance.now();
+                    updateStopwatch();
+                    stopwatchStartBtn.style.display = 'none';
+                    stopwatchPauseBtn.style.display = 'flex';
+                }
+            });
+            
+            stopwatchPauseBtn.addEventListener('click', () => {
+                if (stopwatchRunning) {
+                    stopwatchRunning = false;
+                    cancelAnimationFrame(stopwatchAnimationFrameId);
+                    stopwatchElapsedTime += performance.now() - stopwatchStartTime;
+                    stopwatchStartBtn.style.display = 'flex';
+                    stopwatchPauseBtn.style.display = 'none';
+                }
+            });
+            
+            stopwatchResetBtn.addEventListener('click', () => {
+                stopwatchRunning = false;
+                cancelAnimationFrame(stopwatchAnimationFrameId);
+                stopwatchStartTime = 0;
+                stopwatchElapsedTime = 0;
+                lastLapTime = 0;
+                lapCounter = 0;
+                stopwatchDisplay.textContent = '00:00.000';
+                stopwatchLapsList.innerHTML = '';
+                stopwatchStartBtn.style.display = 'flex';
+                stopwatchPauseBtn.style.display = 'none';
+            });
+            
+            stopwatchLapBtn.addEventListener('click', () => {
+                if (stopwatchRunning) {
+                    lapCounter++;
+                    const currentTime = stopwatchElapsedTime + (performance.now() - stopwatchStartTime);
+                    const lapTime = currentTime - lastLapTime;
+                    lastLapTime = currentTime;
+                    
+                    const lapItem = document.createElement('div');
+                    lapItem.className = 'lap-item';
+                    lapItem.innerHTML = `
+                        <div class="lap-number">圈数 ${lapCounter}</div>
+                        <div class="lap-time">${formatStopwatchTime(lapTime)}</div>
+                        <div class="lap-time">${formatStopwatchTime(currentTime)}</div>
+                    `;
+                    stopwatchLapsList.prepend(lapItem);
+                }
+            });
+            
+            /* 倒计时功能 */
+            const countdownDisplay = document.querySelector('.countdown-display');
+            const countdownHoursInput = document.getElementById('countdown-hours');
+            const countdownMinutesInput = document.getElementById('countdown-minutes');
+            const countdownSecondsInput = document.getElementById('countdown-seconds');
+            const countdownStartBtn = document.getElementById('countdown-start');
+            const countdownPauseBtn = document.getElementById('countdown-pause');
+            const countdownResetBtn = document.getElementById('countdown-reset');
+            
+            let countdownRunning = false;
+            let countdownIntervalId;
+            let totalCountdownSeconds = 0;
+            let remainingCountdownSeconds = 0;
+            
+            function formatCountdownTime(seconds) {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+                const pad = (num) => String(num).padStart(2, '0');
+                return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
+            }
+            
+            function setInitialCountdownDisplay() {
+                const h = parseInt(countdownHoursInput.value) || 0;
+                const m = parseInt(countdownMinutesInput.value) || 0;
+                const s = parseInt(countdownSecondsInput.value) || 0;
+                totalCountdownSeconds = h * 3600 + m * 60 + s;
+                remainingCountdownSeconds = totalCountdownSeconds;
+                countdownDisplay.textContent = formatCountdownTime(remainingCountdownSeconds);
+            }
+            
+            // 初始设置倒计时显示
+            setInitialCountdownDisplay();
+            countdownHoursInput.addEventListener('input', setInitialCountdownDisplay);
+            countdownMinutesInput.addEventListener('input', setInitialCountdownDisplay);
+            countdownSecondsInput.addEventListener('input', setInitialCountdownDisplay);
+            
+            function updateCountdown() {
+                if (remainingCountdownSeconds > 0) {
+                    remainingCountdownSeconds--;
+                    countdownDisplay.textContent = formatCountdownTime(remainingCountdownSeconds);
+                } else {
+                    clearInterval(countdownIntervalId);
+                    countdownRunning = false;
+                    countdownStartBtn.style.display = 'flex';
+                    countdownPauseBtn.style.display = 'none';
+                    countdownDisplay.textContent = '00:00:00';
+                    // 播放提醒声音
+                    try {
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const oscillator = audioContext.createOscillator();
+                        oscillator.type = 'sine';
+                        oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                        oscillator.connect(audioContext.destination);
+                        oscillator.start();
+                        setTimeout(() => oscillator.stop(), 1000);
+                    } catch (e) {
+                        console.log('音频播放失败:', e);
+                    }
+                }
+            }
+            
+            countdownStartBtn.addEventListener('click', () => {
+                if (!countdownRunning) {
+                    const h = parseInt(countdownHoursInput.value) || 0;
+                    const m = parseInt(countdownMinutesInput.value) || 0;
+                    const s = parseInt(countdownSecondsInput.value) || 0;
+                    
+                    if (h === 0 && m === 0 && s === 0) {
+                        alert('请设置倒计时时间');
+                        return;
+                    }
+                    
+                    totalCountdownSeconds = h * 3600 + m * 60 + s;
+                    remainingCountdownSeconds = totalCountdownSeconds;
+                    
+                    countdownRunning = true;
+                    countdownIntervalId = setInterval(updateCountdown, 1000);
+                    countdownStartBtn.style.display = 'none';
+                    countdownPauseBtn.style.display = 'flex';
+                }
+            });
+            
+            countdownPauseBtn.addEventListener('click', () => {
+                if (countdownRunning) {
+                    countdownRunning = false;
+                    clearInterval(countdownIntervalId);
+                    countdownStartBtn.style.display = 'flex';
+                    countdownPauseBtn.style.display = 'none';
+                }
+            });
+            
+            countdownResetBtn.addEventListener('click', () => {
+                countdownRunning = false;
+                clearInterval(countdownIntervalId);
+                countdownHoursInput.value = '0';
+                countdownMinutesInput.value = '0';
+                countdownSecondsInput.value = '0';
+                setInitialCountdownDisplay();
+                countdownStartBtn.style.display = 'flex';
+                countdownPauseBtn.style.display = 'none';
+            });
+            
+            /* 世界时钟功能 */
+            const worldClockList = document.getElementById('world-clock-list');
+            const addCityButton = document.getElementById('add-city-button');
+            
+            const timezones = [
+                { id: 'Asia/Shanghai', name: '上海, 中国' },
+                { id: 'Asia/Tokyo', name: '东京, 日本' },
+                { id: 'America/New_York', name: '纽约, 美国' },
+                { id: 'Europe/London', name: '伦敦, 英国' },
+                { id: 'Australia/Sydney', name: '悉尼, 澳大利亚' }
+            ];
+            
+            function updateWorldClocks() {
+                worldClockList.innerHTML = '';
+                
+                timezones.forEach(tz => {
+                    try {
+                        const now = new Date();
+                        const timeString = now.toLocaleTimeString('zh-CN', {
+                            timeZone: tz.id,
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false
+                        });
+                        
+                        const dateString = now.toLocaleDateString('zh-CN', {
+                            timeZone: tz.id,
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                        
+                        const clockItem = document.createElement('div');
+                        clockItem.className = 'clock-card';
+                        clockItem.innerHTML = `
+                            <div class="clock-header">
+                                <div class="city-name">${tz.name}</div>
+                                <div class="timezone">${tz.id}</div>
+                            </div>
+                            <div class="clock-time">${timeString}</div>
+                            <div class="clock-date">${dateString}</div>
+                        `;
+                        worldClockList.appendChild(clockItem);
+                    } catch (error) {
+                        console.error(`更新时区 ${tz.id} 时出错:`, error);
+                    }
+                });
+            }
+            
+            // 每秒钟更新世界时钟
+            setInterval(updateWorldClocks, 1000);
+            updateWorldClocks();
+            
+            // 添加城市功能
+            addCityButton.addEventListener('click', () => {
+                alert('石宇我一个臭写前端的，懒得写后端，对一个初中生你好意思吗？');
+            });
+        });
+    </script>
+</body>
+</html>
