@@ -102,3 +102,65 @@ Material Design原则：卡片、阴影、浮动按钮
 
 
 下载html直接运行
+
+
+
+# NO-onlina-clock (Notes in English)
+
+A simple clock that can be implemented on any browser with a pure front-end, with just over 700 lines of code   
+
+
+
+Accurate to the millisecond: The second watch is now displayed in the format "Minutes:Seconds. milliseconds" (e.g. 02:34.567)
+Lap function: Each lap will display the current lap time and total time
+Button state management: Start/pause button state switching is smoother
+Reset Function: Reset the stopwatch state completely
+
+UI: Android style design
+Material Design Principles:
+Rounded corner card layout
+Floating Operation Button (FAB)
+Shadows and layering
+Responsive touch area
+
+Color system:
+Use the colors of the Material Design specification
+Blue indicates the main operation
+Green indicates an auxiliary operation
+Red indicates dangerous operation
+
+Navigation Design:
+Bottom tab bar indicator
+Smooth tab transitions
+
+Stopwatch Interface:
+Large digital display
+Circular action buttons
+Lap record card design
+Use monospaced fonts to ensure that the numbers are aligned
+
+Other:
+Responsive design for different screen sizes
+The countdown input interface has been optimized
+World Clock Card Layout
+The overall UI is cleaner and more modern
+This design follows Material Design guidelines and provides a native Android app-like experience, while fixing an issue with the stopwatch feature to make it accurate to the millisecond.
+
+
+
+How it works:
+
+1. Core function implementation
+Local time function
+Use JavaScript's Date object to get the local time
+setInterval updates the display every second
+Use the padStart method to format the time display
+
+Stopwatch function
+Use performance.now() to get a high-precision timestamp
+requestAnimationFrame for smooth millisecond updates
+Format display: minutes: seconds. millisecond
+
+Download the html and run it directly
+
+
