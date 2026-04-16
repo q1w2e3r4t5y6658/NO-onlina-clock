@@ -3,245 +3,505 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多功能时钟</title>
+    <title>时钟</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
     <style>
         :root {
-            --primary: #4285f4;
-            --primary-dark: #3367d6;
-            --secondary: #34a853;
-            --secondary-dark: #2d8c4a;
-            --warning: #fbbc05;
-            --warning-dark: #e6a404;
-            --danger: #ea4335;
-            --danger-dark: #d73a2d;
-            --background: #f5f5f5;
-            --surface: #ffffff;
-            --on-surface: #212121;
-            --on-surface-secondary: #757575;
-            --divider: #e0e0e0;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --primary-color: #1a73e8;
+            --primary-hover: #1557b0;
+            --secondary-color: #fbbc04;
+            --danger-color: #ea4335;
+            --surface-color: #ffffff;
+            --text-primary: #1f1f1f;
+            --text-secondary: #5f6368;
+            --border-color: #dadce0;
+            --shadow-sm: 0 1px 2px 0 rgba(60,64,67,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(60,64,67,0.15);
+            --shadow-lg: 0 10px 15px -3px rgba(60,64,67,0.15);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Roboto', 'Segoe UI', sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            background-color: var(--background);
-            color: var(--on-surface);
+            font-family: 'Roboto', sans-serif;
+            background: #f5f5f5;
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            gap: 24px;
+        }
+        
+        .quote-sidebar {
+            width: 280px;
+            background: var(--surface-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 24px;
+            display: flex;
             flex-direction: column;
+            gap: 24px;
+            height: fit-content;
+        }
+        
+        .history-section {
+            margin-top: auto;
+        }
+        
+        .history-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+        }
+        
+        .history-item {
+            padding: 14px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: var(--radius-md);
+            border-left: 4px solid #34a853;
+            transition: all var(--transition);
+        }
+        
+        .history-item:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .history-year {
+            font-size: 12px;
+            font-weight: 600;
+            color: #2e7d32;
+            margin-bottom: 6px;
+        }
+        
+        .history-event {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+        
+        .quote-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        
+        .quote-item {
             padding: 16px;
-            padding-top: 40px;
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--secondary-color);
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .quote-item:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .quote-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+        
+        .quote-author {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+        
+        .quote-controls {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 12px;
+            gap: 12px;
+        }
+        
+        .quote-timer {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #f5f5f5;
+            padding: 6px 10px;
+            border-radius: 16px;
+        }
+        
+        .quote-timer-value {
+            color: var(--primary-color);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+        }
+        
+        .quote-refresh-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: var(--primary-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quote-refresh-btn:hover {
+            box-shadow: var(--shadow-md);
+            transform: scale(1.1);
+        }
+        
+        .quote-refresh-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .exam-countdown {
+            padding: 24px 24px 16px;
+            text-align: center;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .exam-countdown-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .exam-countdown-days {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .exam-countdown-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-top: 4px;
         }
         
         .app-container {
-            max-width: 500px;
             width: 100%;
-            margin: 0 auto;
-            background-color: var(--surface);
-            border-radius: 20px;
+            max-width: 480px;
+            background: var(--surface-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
             overflow: hidden;
-            box-shadow: var(--shadow);
         }
         
-        /* 导航栏 */
         .nav-tabs {
             display: flex;
-            background-color: var(--surface);
-            border-bottom: 1px solid var(--divider);
+            border-bottom: 1px solid var(--border-color);
+            background: #f8f9fa;
         }
         
         .nav-tab {
             flex: 1;
-            padding: 16px 8px;
-            text-align: center;
+            padding: 16px;
+            border: none;
+            background: none;
             font-size: 14px;
             font-weight: 500;
-            color: var(--on-surface-secondary);
-            background: none;
-            border: none;
-            position: relative;
+            color: var(--text-secondary);
             cursor: pointer;
-            transition: color 0.2s;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.08);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease-out, height 0.4s ease-out;
+            pointer-events: none;
+        }
+        
+        .nav-tab:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(0,0,0,0.03);
         }
         
         .nav-tab.active {
-            color: var(--primary);
+            color: var(--primary-color);
         }
         
         .nav-tab.active::after {
             content: '';
             position: absolute;
             bottom: 0;
-            left: 20%;
-            right: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
             height: 3px;
-            background-color: var(--primary);
-            border-radius: 3px 3px 0 0;
+            background: var(--primary-color);
+            border-radius: 2px 2px 0 0;
+            animation: slideIn 200ms cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* 内容区域 */
         .tab-content {
-            padding: 24px;
+            padding: 32px 24px;
         }
         
         .tab-panel {
             display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .tab-panel.active {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
         
-        /* 本地时间样式 */
-        .local-time-display {
-            font-size: 56px;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(-50%) scaleX(0);
+            }
+            to {
+                transform: translateX(-50%) scaleX(1);
+            }
+        }
+        
+        .time-display {
+            font-size: 64px;
             font-weight: 300;
             text-align: center;
-            letter-spacing: -1px;
-            margin-bottom: 8px;
-            color: var(--on-surface);
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-family: 'NSimSun', '新宋体', SimSun, '宋体', serif;
+            font-variant-numeric: tabular-nums;
         }
         
-        .local-date-display {
-            text-align: center;
-            font-size: 16px;
-            color: var(--on-surface-secondary);
-            margin-bottom: 4px;
-        }
-        
-        .local-day-display {
-            text-align: center;
-            font-size: 16px;
-            color: var(--on-surface-secondary);
-        }
-        
-        /* 秒表样式 */
         .stopwatch-display {
-            font-size: 56px;
+            font-size: 64px;
             font-weight: 300;
             text-align: center;
-            font-family: 'Roboto Mono', monospace;
-            margin: 20px 0;
-            color: var(--on-surface);
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-family: 'NSimSun', '新宋体', SimSun, '宋体', serif;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .date-display {
+            text-align: center;
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
         }
         
         .controls {
             display: flex;
             justify-content: center;
             gap: 16px;
-            margin: 30px 0;
+            margin-top: 32px;
         }
         
         .btn {
+            width: 56px;
+            height: 56px;
             border: none;
             border-radius: 50%;
-            width: 64px;
-            height: 64px;
+            background: var(--surface-color);
+            color: var(--text-primary);
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 14px;
             font-weight: 500;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease-out, height 0.4s ease-out;
+            pointer-events: none;
+        }
+        
+        .btn:hover::before {
+            width: 120px;
+            height: 120px;
+        }
+        
+        .btn:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
         }
         
         .btn:active {
-            transform: scale(0.96);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            transform: translateY(0) scale(0.96);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn:active::before {
+            width: 0;
+            height: 0;
+            transition: 0s;
+        }
+        
+        .btn-primary::before {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-secondary::before {
+            background: rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-danger::before {
+            background: rgba(255, 255, 255, 0.3);
         }
         
         .btn-primary {
-            background-color: var(--primary);
+            background: var(--primary-color);
             color: white;
         }
         
         .btn-primary:hover {
-            background-color: var(--primary-dark);
+            background: var(--primary-hover);
         }
         
         .btn-secondary {
-            background-color: var(--secondary);
-            color: white;
+            background: var(--secondary-color);
+            color: #1f1f1f;
         }
         
         .btn-secondary:hover {
-            background-color: var(--secondary-dark);
-        }
-        
-        .btn-warning {
-            background-color: var(--warning);
-            color: white;
-        }
-        
-        .btn-warning:hover {
-            background-color: var(--warning-dark);
+            background: #f9a825;
         }
         
         .btn-danger {
-            background-color: var(--danger);
+            background: var(--danger-color);
             color: white;
         }
         
         .btn-danger:hover {
-            background-color: var(--danger-dark);
-        }
-        
-        .btn-reset {
-            background-color: #f1f1f1;
-            color: var(--on-surface);
-        }
-        
-        .laps-container {
-            max-height: 200px;
-            overflow-y: auto;
-            border-top: 1px solid var(--divider);
-            padding-top: 16px;
+            background: #c5221f;
         }
         
         .lap-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--divider);
+            align-items: center;
+            padding: 16px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            transition: all var(--transition);
+            animation: slideUp 200ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .lap-item:hover {
+            background: #e8f0fe;
+            border-color: var(--primary-color);
+            transform: translateX(4px);
         }
         
         .lap-number {
             font-weight: 500;
-            color: var(--on-surface);
+            color: var(--primary-color);
+            transition: all var(--transition);
+        }
+        
+        .lap-item:hover .lap-number {
+            font-weight: 600;
         }
         
         .lap-time {
             font-family: 'Roboto Mono', monospace;
             font-size: 16px;
-            color: var(--on-surface);
+            color: var(--text-primary);
         }
         
-        /* 倒计时样式 */
         .countdown-display {
-            font-size: 56px;
+            font-size: 64px;
             font-weight: 300;
             text-align: center;
-            font-family: 'Roboto Mono', monospace;
-            margin: 20px 0 30px;
-            color: var(--on-surface);
+            font-family: 'NSimSun', '新宋体', SimSun, '宋体', serif;
+            margin: 24px 0 32px;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
         }
         
         .time-inputs {
             display: flex;
             justify-content: center;
-            gap: 16px;
-            margin-bottom: 30px;
+            gap: 24px;
+            margin-bottom: 32px;
         }
         
         .time-input-group {
@@ -251,133 +511,227 @@
         }
         
         .time-label {
-            font-size: 14px;
-            color: var(--on-surface-secondary);
+            font-size: 12px;
+            color: var(--text-secondary);
             margin-bottom: 8px;
+            font-weight: 500;
         }
         
         .time-input {
-            width: 80px;
+            width: 72px;
             height: 56px;
-            border: 1px solid var(--divider);
-            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
             font-size: 24px;
             text-align: center;
             font-family: 'Roboto Mono', monospace;
-            padding: 8px;
+            color: var(--text-primary);
+            transition: all var(--transition);
+            background: var(--surface-color);
         }
         
-        /* 世界时钟样式 */
-        .world-clock-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .time-input:hover {
+            border-color: var(--text-secondary);
         }
         
-        .clock-card {
-            background-color: var(--surface);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        .time-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+            outline: none;
         }
         
-        .clock-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        
-        .city-name {
-            font-weight: 500;
-            font-size: 18px;
-        }
-        
-        .timezone {
-            font-size: 14px;
-            color: var(--on-surface-secondary);
-        }
-        
-        .clock-time {
-            font-size: 32px;
-            font-weight: 300;
-            font-family: 'Roboto Mono', monospace;
-        }
-        
-        .clock-date {
-            font-size: 14px;
-            color: var(--on-surface-secondary);
-            margin-top: 4px;
-        }
-        
-        .add-city-btn {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 500;
+        .laps-container {
+            max-height: 240px;
+            overflow-y: auto;
             margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .laps-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .laps-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .laps-container::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+        
+        .github-link {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--surface-color);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            transition: background-color 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all var(--transition);
+            z-index: 100;
+            text-decoration: none;
+            color: var(--text-primary);
         }
         
-        .add-city-btn:hover {
-            background-color: var(--primary-dark);
+        .github-link::after {
+            content: '查看作者';
+            position: absolute;
+            right: 60px;
+            white-space: nowrap;
+            background: var(--surface-color);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all var(--transition);
+            pointer-events: none;
         }
         
-        /* 响应式调整 */
+        .github-link:hover::after {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .github-link:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--surface-color);
+            box-shadow: var(--shadow-lg);
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100px) scale(0.95);
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 320px;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+        
+        .notification.success {
+            border-left: 4px solid #34a853;
+        }
+        
+        .notification.error {
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .notification.warning {
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        @media (max-width: 900px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .quote-sidebar {
+                width: 100%;
+                max-width: 480px;
+            }
+        }
+        
         @media (max-width: 480px) {
-            .local-time-display, .stopwatch-display, .countdown-display {
+            .time-display, .countdown-display {
                 font-size: 48px;
             }
             
-            .time-input {
-                width: 70px;
-                height: 50px;
-                font-size: 20px;
+            .exam-countdown-days {
+                font-size: 36px;
+            }
+            
+            .btn {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .tab-content {
+                padding: 24px 16px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="notification" id="notification"></div>
+    
+    <div class="quote-sidebar">
+        <div class="quote-section">
+            <div class="quote-title">每日一言</div>
+            
+            <div class="quote-item" id="quote-item">
+                <div class="quote-text" id="quote-text">"一万年太久，只争朝夕。"</div>
+                <div class="quote-author" id="quote-author">—— 毛泽东</div>
+            </div>
+            <div class="quote-controls">
+                <div class="quote-timer">
+                    <span class="quote-timer-label">下次刷新</span>
+                    <span class="quote-timer-value" id="quote-timer-value">30s</span>
+                </div>
+                <button class="quote-refresh-btn" id="quote-refresh" title="刷新一言">↺</button>
+            </div>
+        </div>
+        
+        <div class="history-section">
+            <div class="history-title">历史上的今天</div>
+            
+            <div class="history-item" id="history-item">
+                <div class="history-year" id="history-year">1898年</div>
+                <div class="history-event" id="history-event">戊戌变法开始</div>
+            </div>
+        </div>
+    </div>
+    
     <div class="app-container">
-        <!-- 导航栏 -->
+        <div class="exam-countdown">
+            <div class="exam-countdown-title">距离中考还有</div>
+            <div class="exam-countdown-days" id="exam-days">0</div>
+            <div class="exam-countdown-label">天</div>
+        </div>
         <div class="nav-tabs">
             <button class="nav-tab active" data-tab="local-time">本地时间</button>
             <button class="nav-tab" data-tab="stopwatch">秒表</button>
             <button class="nav-tab" data-tab="countdown">倒计时</button>
-            <button class="nav-tab" data-tab="world-clock">世界时钟</button>
         </div>
         
-        <!-- 内容区域 -->
         <div class="tab-content">
-            <!-- 本地时间 -->
             <div class="tab-panel active" id="local-time">
-                <div class="local-time-display">00:00:00</div>
-                <div class="local-date-display">2023年10月15日</div>
-                <div class="local-day-display">星期日</div>
+                <div class="time-display">00:00:00</div>
+                <div class="date-display">2023年10月15日</div>
+                <div class="date-display" style="margin-top: 8px;">星期日</div>
             </div>
             
-            <!-- 秒表 -->
             <div class="tab-panel" id="stopwatch">
                 <div class="stopwatch-display">00:00.000</div>
                 <div class="controls">
-                    <button class="btn btn-danger" id="stopwatch-reset">复位</button>
-                    <button class="btn btn-primary" id="stopwatch-start">开始</button>
-                    <button class="btn btn-warning" id="stopwatch-pause" style="display:none">暂停</button>
-                    <button class="btn btn-secondary" id="stopwatch-lap">计圈</button>
+                    <button class="btn btn-danger" id="stopwatch-reset">↺</button>
+                    <button class="btn btn-primary" id="stopwatch-start">▶</button>
+                    <button class="btn btn-secondary" id="stopwatch-pause" style="display:none">⏸</button>
+                    <button class="btn btn-secondary" id="stopwatch-lap">圈</button>
                 </div>
-                <div class="laps-container" id="stopwatch-laps">
-                    <!-- 圈数记录会在这里显示 -->
-                </div>
+                <div class="laps-container" id="stopwatch-laps"></div>
             </div>
             
-            <!-- 计时器 -->
             <div class="tab-panel" id="countdown">
                 <div class="countdown-display">00:00:00</div>
                 <div class="time-inputs">
@@ -395,71 +749,188 @@
                     </div>
                 </div>
                 <div class="controls">
-                    <button class="btn btn-danger" id="countdown-reset">重置</button>
-                    <button class="btn btn-primary" id="countdown-start">开始</button>
-                    <button class="btn btn-warning" id="countdown-pause" style="display:none">暂停</button>
+                    <button class="btn btn-danger" id="countdown-reset">↺</button>
+                    <button class="btn btn-primary" id="countdown-start">▶</button>
+                    <button class="btn btn-secondary" id="countdown-pause" style="display:none">⏸</button>
                 </div>
-            </div>
-            
-            <!-- 世界时钟 -->
-            <div class="tab-panel" id="world-clock">
-                <div class="world-clock-list" id="world-clock-list">
-                    <!-- 世界时钟城市会在这里显示 -->
-                </div>
-                <button class="add-city-btn" id="add-city-button">添加城市</button>
             </div>
         </div>
     </div>
-
+    
+    <a href="https://github.com/q1w2e3r4t5y6658" target="_blank" class="github-link">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+    </a>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 导航切换
+            const quoteText = document.getElementById('quote-text');
+            const quoteAuthor = document.getElementById('quote-author');
+            const quoteItem = document.getElementById('quote-item');
+            const historyYear = document.getElementById('history-year');
+            const historyEvent = document.getElementById('history-event');
+            const historyItem = document.getElementById('history-item');
+            
+            const quoteRefreshBtn = document.getElementById('quote-refresh');
+            const quoteTimerValue = document.getElementById('quote-timer-value');
+            let countdownSeconds = 30;
+            let lastQuoteText = '';
+            
+            function updateTimer() {
+                countdownSeconds--;
+                if (countdownSeconds <= 0) countdownSeconds = 30;
+                quoteTimerValue.textContent = countdownSeconds + 's';
+            }
+            
+            setInterval(updateTimer, 1000);
+            
+            function refreshQuote() {
+                quoteItem.style.opacity = '0';
+                quoteItem.style.transform = 'translateY(-10px)';
+                
+                function getQuote() {
+                    fetch('https://v1.hitokoto.cn/?c=d&c=e&c=g&c=h&c=i&c=k')
+                        .then(response => response.json())
+                        .then(data => {
+                            let newText = data.hitokoto;
+                            if (newText === lastQuoteText && lastQuoteText) {
+                                getQuote();
+                                return;
+                            }
+                            
+                            setTimeout(() => {
+                                lastQuoteText = newText;
+                                quoteText.textContent = '"' + newText + '"';
+                                let author = data.from_who || data.from || '佚名';
+                                quoteAuthor.textContent = '—— ' + author;
+                                
+                                quoteItem.style.opacity = '1';
+                                quoteItem.style.transform = 'translateY(0)';
+                                
+                                countdownSeconds = 30;
+                                quoteTimerValue.textContent = '30s';
+                            }, 200);
+                        })
+                        .catch(error => {
+                            setTimeout(() => {
+                                quoteText.textContent = '"一万年太久，只争朝夕。"';
+                                quoteAuthor.textContent = '—— 毛泽东';
+                                
+                                quoteItem.style.opacity = '1';
+                                quoteItem.style.transform = 'translateY(0)';
+                                
+                                countdownSeconds = 30;
+                                quoteTimerValue.textContent = '30s';
+                            }, 200);
+                        });
+                }
+                
+                getQuote();
+            }
+            
+            refreshQuote();
+            quoteRefreshBtn.addEventListener('click', refreshQuote);
+            setInterval(refreshQuote, 30000);
+            
+            function updateHistory() {
+                historyItem.style.opacity = '0';
+                historyItem.style.transform = 'translateY(10px)';
+                
+                fetch('https://jkapi.com/api/history')
+                    .then(response => response.text())
+                    .then(text => {
+                        const lines = text.split('\n').filter(line => line.trim());
+                        let year = '';
+                        let event = '';
+                        
+                        for (let i = 1; i < lines.length; i++) {
+                            const match = lines[i].match(/^(\d+)\s+(.+)$/);
+                            if (match) {
+                                year = match[1] + '年';
+                                event = match[2];
+                                break;
+                            }
+                        }
+                        
+                        if (!year) {
+                            year = '历史';
+                            event = '今天是普通的一天，但可以变得不平凡！';
+                        }
+                        
+                        setTimeout(() => {
+                            historyYear.textContent = year;
+                            historyEvent.textContent = event;
+                            historyItem.style.opacity = '1';
+                            historyItem.style.transform = 'translateY(0)';
+                        }, 200);
+                    })
+                    .catch(error => {
+                        setTimeout(() => {
+                            historyYear.textContent = '历史';
+                            historyEvent.textContent = '今天是普通的一天，但可以变得不平凡！';
+                            historyItem.style.opacity = '1';
+                            historyItem.style.transform = 'translateY(0)';
+                        }, 200);
+                    });
+            }
+            
+            updateHistory();
+            
+            const examDaysDisplay = document.getElementById('exam-days');
+            
+            function updateExamCountdown() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const examDate = new Date(year, 5, 14);
+                
+                if (now > examDate) {
+                    examDate.setFullYear(year + 1);
+                }
+                
+                const diffTime = examDate - now;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                examDaysDisplay.textContent = diffDays;
+            }
+            
+            updateExamCountdown();
+            setInterval(updateExamCountdown, 3600000);
+            
             const navTabs = document.querySelectorAll('.nav-tab');
             const tabPanels = document.querySelectorAll('.tab-panel');
             
             navTabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    // 移除所有活动状态
                     navTabs.forEach(t => t.classList.remove('active'));
                     tabPanels.forEach(p => p.classList.remove('active'));
-                    
-                    // 添加当前活动状态
                     tab.classList.add('active');
                     const tabId = tab.getAttribute('data-tab');
                     document.getElementById(tabId).classList.add('active');
                 });
             });
             
-            /* 本地时间功能 */
-            const localTimeDisplay = document.querySelector('.local-time-display');
-            const localDateDisplay = document.querySelector('.local-date-display');
-            const localDayDisplay = document.querySelector('.local-day-display');
+            const localTimeDisplay = document.querySelector('.time-display');
+            const dateDisplay = document.querySelectorAll('.date-display');
             
             function updateLocalTime() {
                 const now = new Date();
-                
-                // 格式化时间
                 const hours = String(now.getHours()).padStart(2, '0');
                 const minutes = String(now.getMinutes()).padStart(2, '0');
                 const seconds = String(now.getSeconds()).padStart(2, '0');
-                localTimeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+                localTimeDisplay.textContent = hours + ':' + minutes + ':' + seconds;
                 
-                // 格式化日期
                 const year = now.getFullYear();
                 const month = String(now.getMonth() + 1).padStart(2, '0');
                 const day = String(now.getDate()).padStart(2, '0');
-                localDateDisplay.textContent = `${year}年${month}月${day}日`;
+                dateDisplay[0].textContent = year + '年' + month + '月' + day + '日';
                 
-                // 星期几
                 const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-                const dayOfWeek = weekdays[now.getDay()];
-                localDayDisplay.textContent = dayOfWeek;
+                dateDisplay[1].textContent = weekdays[now.getDay()];
             }
             
             setInterval(updateLocalTime, 1000);
             updateLocalTime();
             
-            /* 秒表功能 */
             const stopwatchDisplay = document.querySelector('.stopwatch-display');
             const stopwatchStartBtn = document.getElementById('stopwatch-start');
             const stopwatchPauseBtn = document.getElementById('stopwatch-pause');
@@ -474,14 +945,12 @@
             let lapCounter = 0;
             let lastLapTime = 0;
             
-            function formatStopwatchTime(milliseconds) {
-                const totalSeconds = Math.floor(milliseconds / 1000);
-                const ms = Math.floor(milliseconds % 1000);
+            function formatStopwatchTime(ms) {
+                const totalSeconds = Math.floor(ms / 1000);
+                const milliseconds = Math.floor(ms % 1000);
                 const minutes = Math.floor(totalSeconds / 60);
                 const seconds = totalSeconds % 60;
-                
-                const pad = (num, len = 2) => String(num).padStart(len, '0');
-                return `${pad(minutes)}:${pad(seconds)}.${pad(ms, 3)}`;
+                return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0') + '.' + String(milliseconds).padStart(3, '0');
             }
             
             function updateStopwatch() {
@@ -534,16 +1003,11 @@
                     
                     const lapItem = document.createElement('div');
                     lapItem.className = 'lap-item';
-                    lapItem.innerHTML = `
-                        <div class="lap-number">圈数 ${lapCounter}</div>
-                        <div class="lap-time">${formatStopwatchTime(lapTime)}</div>
-                        <div class="lap-time">${formatStopwatchTime(currentTime)}</div>
-                    `;
+                    lapItem.innerHTML = '<div class="lap-number">圈数 ' + lapCounter + '</div><div class="lap-time">' + formatStopwatchTime(lapTime) + '</div><div class="lap-time">' + formatStopwatchTime(currentTime) + '</div>';
                     stopwatchLapsList.prepend(lapItem);
                 }
             });
             
-            /* 倒计时功能 */
             const countdownDisplay = document.querySelector('.countdown-display');
             const countdownHoursInput = document.getElementById('countdown-hours');
             const countdownMinutesInput = document.getElementById('countdown-minutes');
@@ -561,8 +1025,7 @@
                 const hours = Math.floor(seconds / 3600);
                 const minutes = Math.floor((seconds % 3600) / 60);
                 const secs = seconds % 60;
-                const pad = (num) => String(num).padStart(2, '0');
-                return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
+                return String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
             }
             
             function setInitialCountdownDisplay() {
@@ -574,7 +1037,6 @@
                 countdownDisplay.textContent = formatCountdownTime(remainingCountdownSeconds);
             }
             
-            // 初始设置倒计时显示
             setInitialCountdownDisplay();
             countdownHoursInput.addEventListener('input', setInitialCountdownDisplay);
             countdownMinutesInput.addEventListener('input', setInitialCountdownDisplay);
@@ -590,18 +1052,7 @@
                     countdownStartBtn.style.display = 'flex';
                     countdownPauseBtn.style.display = 'none';
                     countdownDisplay.textContent = '00:00:00';
-                    // 播放提醒声音
-                    try {
-                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                        const oscillator = audioContext.createOscillator();
-                        oscillator.type = 'sine';
-                        oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-                        oscillator.connect(audioContext.destination);
-                        oscillator.start();
-                        setTimeout(() => oscillator.stop(), 1000);
-                    } catch (e) {
-                        console.log('音频播放失败:', e);
-                    }
+                    showNotification('倒计时结束！', 'success');
                 }
             }
             
@@ -646,64 +1097,15 @@
                 countdownPauseBtn.style.display = 'none';
             });
             
-            /* 世界时钟功能 */
-            const worldClockList = document.getElementById('world-clock-list');
-            const addCityButton = document.getElementById('add-city-button');
-            
-            const timezones = [
-                { id: 'Asia/Shanghai', name: '上海, 中国' },
-                { id: 'Asia/Tokyo', name: '东京, 日本' },
-                { id: 'America/New_York', name: '纽约, 美国' },
-                { id: 'Europe/London', name: '伦敦, 英国' },
-                { id: 'Australia/Sydney', name: '悉尼, 澳大利亚' }
-            ];
-            
-            function updateWorldClocks() {
-                worldClockList.innerHTML = '';
-                
-                timezones.forEach(tz => {
-                    try {
-                        const now = new Date();
-                        const timeString = now.toLocaleTimeString('zh-CN', {
-                            timeZone: tz.id,
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit',
-                            hour12: false
-                        });
-                        
-                        const dateString = now.toLocaleDateString('zh-CN', {
-                            timeZone: tz.id,
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        });
-                        
-                        const clockItem = document.createElement('div');
-                        clockItem.className = 'clock-card';
-                        clockItem.innerHTML = `
-                            <div class="clock-header">
-                                <div class="city-name">${tz.name}</div>
-                                <div class="timezone">${tz.id}</div>
-                            </div>
-                            <div class="clock-time">${timeString}</div>
-                            <div class="clock-date">${dateString}</div>
-                        `;
-                        worldClockList.appendChild(clockItem);
-                    } catch (error) {
-                        console.error(`更新时区 ${tz.id} 时出错:`, error);
-                    }
-                });
+            function showNotification(message, type) {
+                if (!type) type = 'success';
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = 'notification ' + type + ' show';
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
             }
-            
-            // 每秒钟更新世界时钟
-            setInterval(updateWorldClocks, 1000);
-            updateWorldClocks();
-            
-            // 添加城市功能
-            addCityButton.addEventListener('click', () => {
-                alert('石宇我一个臭写前端的，懒得写后端，对一个初中生你好意思吗？');
-            });
         });
     </script>
 </body>
