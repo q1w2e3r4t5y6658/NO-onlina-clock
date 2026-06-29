@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>时钟</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Flex:opsz,wght@8..144,300;8..144,400;8..144,500;8..144,700&display=swap">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <div id="notification" class="snackbar"></div>
+
+  <aside class="sidebar">
+    <div class="card card--quote anim-slide" id="quote-item" style="animation-delay:60ms">
+      <div class="card__header">每日一言</div>
+      <div class="card__body" id="quote-text">"一万年太久，只争朝夕。"</div>
+      <div class="card__author" id="quote-author">—— 毛泽东</div>
+      <div class="card__footer">
+        <span class="card__timer">
+          <span>下次刷新</span>
+          <span class="card__timer-val" id="quote-timer-value">30s</span>
+        </span>
+        <button class="icon-btn" id="quote-refresh" title="换一句">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L12 12h8V4l-2.35 2.35z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="card card--history anim-slide" id="history-item" style="animation-delay:130ms">
+      <div class="card__meta" id="history-year">1898年</div>
+      <div class="card__event" id="history-event">戊戌变法开始</div>
+    </div>
+  </aside>
+
+  <main class="main-panel">
+    <header class="top-bar">
+      <h1 class="top-bar__title">时钟</h1>
+    </header>
+
+    <nav class="tab-bar">
+      <button class="tab active" data-tab="local-time">
+        本地时间
+        <span class="tab__indicator"></span>
+      </button>
+      <button class="tab" data-tab="stopwatch">
+        秒表
+        <span class="tab__indicator"></span>
+      </button>
+      <button class="tab" data-tab="countdown">
+        倒计时
+        <span class="tab__indicator"></span>
+      </button>
+    </nav>
+
+    <div class="tab-content">
+      <div class="tab-panel active" id="local-time">
+        <div class="time-display">00:00:00</div>
+        <div class="date-row">2026年01月01日</div>
+        <div class="date-wrapper">
+          <span class="weekday-badge">星期四</span>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="stopwatch">
+        <div class="stopwatch-display">00:00.000</div>
+        <div class="controls">
+          <button class="fab fab--error" id="stopwatch-reset">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+          </button>
+          <button class="fab fab--primary" id="stopwatch-start" style="display:flex">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button class="fab fab--tertiary" id="stopwatch-pause" style="display:none">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+          <button class="fab fab--tertiary" id="stopwatch-lap" style="display:flex">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </button>
+        </div>
+        <div class="laps-container" id="stopwatch-laps">
+          <div class="laps-empty">暂无圈数记录</div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="countdown">
+        <div class="countdown-display">00:00:00</div>
+        <div class="time-inputs">
+          <div class="time-field">
+            <label class="time-field__label">小时</label>
+            <input type="number" class="time-field__input" id="countdown-hours" min="0" max="99" value="0" inputmode="numeric">
+          </div>
+          <div class="time-field">
+            <label class="time-field__label">分钟</label>
+            <input type="number" class="time-field__input" id="countdown-minutes" min="0" max="59" value="0" inputmode="numeric">
+          </div>
+          <div class="time-field">
+            <label class="time-field__label">秒钟</label>
+            <input type="number" class="time-field__input" id="countdown-seconds" min="0" max="59" value="0" inputmode="numeric">
+          </div>
+        </div>
+        <div class="controls">
+          <button class="fab fab--error" id="countdown-reset">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </button>
+          <button class="fab fab--primary" id="countdown-start" style="display:flex">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button class="fab fab--tertiary" id="countdown-pause" style="display:none">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <a href="https://github.com/q1w2e3r4t5y6658" target="_blank" rel="noopener" class="gh-link">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+    <span class="gh-link__tip">q1w2e3r4t5y6658</span>
+  </a>
+
+  <script>
+    // ========== Notification ==========
+    class Notification {
+      static show(message, duration = 3000) {
+        const el = document.getElementById('notification');
+        if (!el) return;
+        el.textContent = message;
+        el.classList.add('visible');
+        clearTimeout(Notification._timeout);
+        Notification._timeout = setTimeout(() => el.classList.remove('visible'), duration);
+      }
+    }
+    Notification._timeout = null;
+
+    // ========== RippleEffect ==========
+    class RippleEffect {
+      static init() { document.addEventListener('pointerdown', RippleEffect.handle); }
+      static handle(event) {
+        const el = event.target.closest('.fab, .icon-btn, .tab, .gh-link');
+        if (!el) return;
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        const rect = el.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height) * 2;
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (event.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (event.clientY - rect.top - size / 2) + 'px';
+        el.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+      }
+    }
+
+    // ========== Clock ==========
+    class Clock {
+      constructor() {
+        this.timeDisplay = document.querySelector('.time-display');
+        this.dateRow = document.querySelector('.date-row');
+        this.weekdayBadge = document.querySelector('.weekday-badge');
+        this.weekdays = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+      }
+      init() { this.update(); setInterval(() => this.update(), 1000); }
+      update() {
+        const n = new Date();
+        this.timeDisplay.textContent = [n.getHours(), n.getMinutes(), n.getSeconds()].map(v => String(v).padStart(2,'0')).join(':');
+        if (this.dateRow) {
+          this.dateRow.textContent = n.getFullYear() + '年' + String(n.getMonth()+1).padStart(2,'0') + '月' + String(n.getDate()).padStart(2,'0') + '日';
+        }
+        if (this.weekdayBadge) this.weekdayBadge.textContent = this.weekdays[n.getDay()];
+      }
+    }
+
+    // ========== Stopwatch ==========
+    class Stopwatch {
+      constructor() {
+        this.display = document.querySelector('.stopwatch-display');
+        this.startBtn = document.getElementById('stopwatch-start');
+        this.pauseBtn = document.getElementById('stopwatch-pause');
+        this.resetBtn = document.getElementById('stopwatch-reset');
+        this.lapBtn = document.getElementById('stopwatch-lap');
+        this.lapsContainer = document.getElementById('stopwatch-laps');
+        this.running = false; this.startTime = 0; this.elapsedTime = 0;
+        this.rafId = null; this.lapCount = 0; this.lastLapTime = 0;
+      }
+      init() {
+        this.startBtn.addEventListener('click', () => this.start());
+        this.pauseBtn.addEventListener('click', () => this.pause());
+        this.resetBtn.addEventListener('click', () => this.reset());
+        this.lapBtn.addEventListener('click', () => this.recordLap());
+      }
+      start() {
+        if (this.running) return;
+        this.running = true; this.startTime = performance.now(); this.loop();
+        this.startBtn.style.display = 'none'; this.pauseBtn.style.display = 'flex';
+      }
+      pause() {
+        if (!this.running) return;
+        this.running = false; cancelAnimationFrame(this.rafId);
+        this.elapsedTime += performance.now() - this.startTime;
+        this.startBtn.style.display = 'flex'; this.pauseBtn.style.display = 'none';
+      }
+      reset() {
+        this.running = false; if (this.rafId) cancelAnimationFrame(this.rafId);
+        this.startTime = 0; this.elapsedTime = 0; this.lastLapTime = 0; this.lapCount = 0;
+        this.display.textContent = '00:00.000';
+        this.lapsContainer.innerHTML = '<div class="laps-empty">暂无圈数记录</div>';
+        this.startBtn.style.display = 'flex'; this.pauseBtn.style.display = 'none';
+      }
+      loop() {
+        if (!this.running) return;
+        this.display.textContent = Stopwatch.format(this.elapsedTime + (performance.now() - this.startTime));
+        this.rafId = requestAnimationFrame(() => this.loop());
+      }
+      recordLap() {
+        if (!this.running) return;
+        this.lapCount++;
+        const cur = this.elapsedTime + (performance.now() - this.startTime);
+        const lap = cur - this.lastLapTime; this.lastLapTime = cur;
+        if (this.lapsContainer.querySelector('.laps-empty')) this.lapsContainer.innerHTML = '';
+        const item = document.createElement('div');
+        item.className = 'lap-row';
+        item.innerHTML = '<span class="lap-num">圈 ' + this.lapCount + '</span><span class="lap-split">' + Stopwatch.format(lap) + '</span><span class="lap-total">' + Stopwatch.format(cur) + '</span>';
+        this.lapsContainer.prepend(item);
+        this.lapsContainer.querySelectorAll('.lap-row').forEach((el, i) => el.style.animationDelay = (i * 40) + 'ms');
+      }
+      static format(ms) {
+        const s = Math.floor(ms / 1000), mil = Math.floor(ms % 1000);
+        return String(Math.floor(s / 60)).padStart(2,'0') + ':' + String(s % 60).padStart(2,'0') + '.' + String(mil).padStart(3,'0');
+      }
+    }
+
+    // ========== Countdown ==========
+    class Countdown {
+      constructor() {
+        this.display = document.querySelector('.countdown-display');
+        this.hIn = document.getElementById('countdown-hours');
+        this.mIn = document.getElementById('countdown-minutes');
+        this.sIn = document.getElementById('countdown-seconds');
+        this.startBtn = document.getElementById('countdown-start');
+        this.pauseBtn = document.getElementById('countdown-pause');
+        this.resetBtn = document.getElementById('countdown-reset');
+        this.running = false; this.intervalId = null; this.total = 0; this.remaining = 0;
+      }
+      init() {
+        this.refresh();
+        this.hIn.addEventListener('input', () => this.refresh());
+        this.mIn.addEventListener('input', () => this.refresh());
+        this.sIn.addEventListener('input', () => this.refresh());
+        this.startBtn.addEventListener('click', () => this.start());
+        this.pauseBtn.addEventListener('click', () => this.pause());
+        this.resetBtn.addEventListener('click', () => this.reset());
+      }
+      _get() { return (parseInt(this.hIn.value)||0)*3600 + (parseInt(this.mIn.value)||0)*60 + (parseInt(this.sIn.value)||0); }
+      refresh() { this.total = this._get(); this.remaining = this.total; this.display.textContent = Countdown.format(this.remaining); }
+      start() {
+        if (this.running) return;
+        const t = this._get();
+        if (t === 0) { Notification.show('请设置倒计时时间'); return; }
+        this.total = t; this.remaining = t; this.running = true;
+        this.display.textContent = Countdown.format(this.remaining);
+        this.intervalId = setInterval(() => this.tick(), 1000);
+        this.startBtn.style.display = 'none'; this.pauseBtn.style.display = 'flex';
+      }
+      pause() {
+        if (!this.running) return;
+        this.running = false; clearInterval(this.intervalId);
+        this.startBtn.style.display = 'flex'; this.pauseBtn.style.display = 'none';
+      }
+      reset() {
+        this.running = false; if (this.intervalId) clearInterval(this.intervalId);
+        this.hIn.value = '0'; this.mIn.value = '0'; this.sIn.value = '0'; this.refresh();
+        this.startBtn.style.display = 'flex'; this.pauseBtn.style.display = 'none';
+      }
+      tick() {
+        if (this.remaining > 0) { this.remaining--; this.display.textContent = Countdown.format(this.remaining); }
+        if (this.remaining === 0) {
+          this.running = false; clearInterval(this.intervalId);
+          this.startBtn.style.display = 'flex'; this.pauseBtn.style.display = 'none';
+          this.display.textContent = '00:00:00'; Notification.show('倒计时结束！');
+        }
+      }
+      static format(s) {
+        return String(Math.floor(s/3600)).padStart(2,'0') + ':' + String(Math.floor((s%3600)/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+      }
+    }
+
+    // ========== QuoteService ==========
+    class QuoteService {
+      constructor() {
+        this.textEl = document.getElementById('quote-text');
+        this.authorEl = document.getElementById('quote-author');
+        this.cardEl = document.getElementById('quote-item');
+        this.refreshBtn = document.getElementById('quote-refresh');
+        this.timerEl = document.getElementById('quote-timer-value');
+        this.lastQuote = ''; this.cd = 30; this.auto = null;
+      }
+      init() {
+        this.fetch();
+        this.refreshBtn.addEventListener('click', () => this.fetch());
+        setInterval(() => { this.cd--; if (this.cd <= 0) this.cd = 30; this.timerEl.textContent = this.cd + 's'; }, 1000);
+        this.auto = setInterval(() => this.fetch(), 30000);
+      }
+      fetch() {
+        this.cardEl.style.opacity = '0'; this.cardEl.style.transform = 'translateY(-8px)';
+        fetch('https://v1.hitokoto.cn/?c=d&c=e&c=g&c=h&c=i&c=k')
+          .then(r => r.json()).then(d => {
+            if (d.hitokoto === this.lastQuote && this.lastQuote) { this.fetch(); return; }
+            this.show(d.hitokoto, d.from_who || d.from || '佚名');
+          })
+          .catch(() => this.show('一万年太久，只争朝夕。', '毛泽东'));
+      }
+      show(text, author) {
+        setTimeout(() => {
+          this.lastQuote = text;
+          this.textEl.textContent = '"' + text + '"';
+          this.authorEl.textContent = '—— ' + author;
+          this.cardEl.style.opacity = '1'; this.cardEl.style.transform = 'translateY(0)';
+          this.cd = 30; this.timerEl.textContent = '30s';
+        }, 200);
+      }
+    }
+
+    // ========== HistoryService ==========
+    class HistoryService {
+      constructor() {
+        this.yearEl = document.getElementById('history-year');
+        this.eventEl = document.getElementById('history-event');
+        this.cardEl = document.getElementById('history-item');
+      }
+      init() { this.fetch(); }
+      fetch() {
+        this.cardEl.style.opacity = '0'; this.cardEl.style.transform = 'translateY(8px)';
+        fetch('https://jkapi.com/api/history')
+          .then(r => r.text()).then(text => {
+            const lines = text.split('\n').filter(l => l.trim());
+            let y = '', e = '';
+            for (let i = 1; i < lines.length; i++) {
+              const m = lines[i].match(/^(\d+)\s+(.+)$/);
+              if (m) { y = m[1] + '年'; e = m[2]; break; }
+            }
+            if (!y) { y = '历史'; e = '今天是普通的一天，但可以变得不平凡！'; }
+            this.show(y, e);
+          })
+          .catch(() => this.show('历史', '今天是普通的一天，但可以变得不平凡！'));
+      }
+      show(year, event) {
+        setTimeout(() => {
+          this.yearEl.textContent = year; this.eventEl.textContent = event;
+          this.cardEl.style.opacity = '1'; this.cardEl.style.transform = 'translateY(0)';
+        }, 200);
+      }
+    }
+
+    // ========== App ==========
+    class App {
+      constructor() {
+        this.tabs = document.querySelectorAll('.tab');
+        this.panels = document.querySelectorAll('.tab-panel');
+        this.order = ['local-time', 'stopwatch', 'countdown'];
+        this.idx = 0;
+      }
+      init() {
+        RippleEffect.init();
+        this.tabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            const id = tab.getAttribute('data-tab');
+            const ni = this.order.indexOf(id);
+            if (ni === this.idx) return;
+            const dir = ni > this.idx ? 1 : -1;
+            const old = document.getElementById(this.order[this.idx]);
+            const nu = document.getElementById(id);
+            this._swap(old, nu, dir);
+            this.tabs.forEach(t => t.classList.remove('active'));
+            this.panels.forEach(p => p.classList.remove('active'));
+            tab.classList.add('active'); nu.classList.add('active');
+            this.idx = ni;
+          });
+        });
+        new Clock().init();
+        new Stopwatch().init();
+        new Countdown().init();
+        new QuoteService().init();
+        new HistoryService().init();
+
+      }
+      _swap(old, nu, dir) {
+        const d = 280, e = 'cubic-bezier(0.2,0,0,1)';
+        const w = old.offsetWidth;
+        nu.style.display = 'block';
+        nu.style.position = 'absolute';
+        nu.style.top = '0'; nu.style.left = '0';
+        nu.style.width = '100%';
+        nu.style.transition = 'none';
+        nu.style.transform = 'translateX(' + (dir > 0 ? w : -w) + 'px)';
+        nu.style.opacity = '1';
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            old.style.transition = 'transform ' + d + 'ms ' + e;
+            old.style.transform = 'translateX(' + (dir > 0 ? -w : w) + 'px)';
+            nu.style.transition = 'transform ' + d + 'ms ' + e;
+            nu.style.transform = 'translateX(0)';
+          });
+        });
+
+        setTimeout(() => {
+          old.style.display = 'none';
+          old.style.transform = ''; old.style.transition = '';
+          nu.style.position = ''; nu.style.top = ''; nu.style.left = '';
+          nu.style.width = ''; nu.style.transform = ''; nu.style.transition = '';
+        }, d);
+      }
+    }
+
+    new App().init();
+  </script>
+</body>
+</html>

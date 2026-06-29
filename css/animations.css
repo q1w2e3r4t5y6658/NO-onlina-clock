@@ -1,0 +1,12 @@
+@keyframes fade-in     { from{opacity:0} to{opacity:1} }
+@keyframes slide-up    { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slide-left  { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+@keyframes scale-in    { from{opacity:0;transform:scale(.94)} to{opacity:1;transform:scale(1)} }
+@keyframes ripple      { 0%{transform:scale(0);opacity:.12} 100%{transform:scale(4);opacity:0} }
+@keyframes tab-in      { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes snack-up    { from{opacity:0;transform:translateY(100%)} to{opacity:1;transform:translateY(0)} }
+@keyframes snack-down  { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(100%)} }
+
+.anim-fade    { animation: fade-in    var(--md-sys-motion-medium2) var(--md-sys-easing-standard) both }
+.anim-slide   { animation: slide-up   var(--md-sys-motion-medium4) var(--md-sys-easing-emphasized) both }
+.anim-scale   { animation: scale-in   var(--md-sys-motion-medium2) var(--md-sys-easing-emphasized) both }
